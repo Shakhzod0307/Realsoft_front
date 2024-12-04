@@ -17,30 +17,22 @@
             class="stat-item"
             ref="StatItems"
         >
-          <img :src="item.icon" :alt="`Icon ${index + 1}`" />
-          <h4>{{ item.value }}</h4>
-          <p>{{ item.description }}</p>
+          <img :src="`http://localhost:8000${item.image}`" :alt="`Icon ${index + 1}`" />
+          <h4>{{ item.number }}</h4>
+          <p>{{ item.title }}</p>
         </div>
       </div>
       <img :src="`http://localhost:8000${Image}`" alt="World Map" class="world-map" />
     </div>
   </div>
 </template>
-
-
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import axios from "axios";
 const Title = ref(null);
 const Heading = ref(null);
 const Description = ref(null);
-
-const statItems = ref([
-  { icon: "/images/blueprint.svg", value: "260+", description: "Реализованные проекты" },
-  { icon: "/images/chart-histogram.svg", value: "150%", description: "Среднегодовой темп роста" },
-  { icon: "/images/admin-alt.svg", value: "200+", description: "Специалисты" },
-  { icon: "/images/ranking-stars.svg", value: "23+", description: "Годы уникального опыта" },
-]);
+const statItems = ref([]);
 const Image = ref(null);
 const fetchImages = async () => {
   try {
@@ -52,8 +44,17 @@ const fetchImages = async () => {
     console.error('Error fetching images:', error);
   }
 };
-let observers = [];
+const fetchStatistics = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/get-statistics');
+    statItems.value = response.data.data.data;
+    // console.log(response.data.data.data);
+  } catch (error) {
+    console.error('Error fetching images:', error);
+  }
+};
 
+let observers = [];
 const createObserver = (element, className) => {
   return new IntersectionObserver(
       (entries) => {
@@ -71,6 +72,7 @@ const createObserver = (element, className) => {
 
 onMounted(() => {
   fetchImages();
+  fetchStatistics();
   if (Title.value) {
     const observerTitle = createObserver(Title.value, 'animate-title');
     observerTitle.observe(Title.value);
@@ -116,7 +118,7 @@ onUnmounted(() => {
 .subheading,
 .heading,
 .description{
-  opacity: 0;
+  opacity: 1;
   transition: opacity 1s ease-out, transform 0.5s ease-out;
   transform: translateY(50px);
 }
@@ -190,7 +192,7 @@ onUnmounted(() => {
 .stat-item {
   padding: 1rem;
   text-align: center;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 1s ease-out, transform 1s ease-out;
   transform: translateX(50px);
 }

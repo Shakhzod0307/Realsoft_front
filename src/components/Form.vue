@@ -72,16 +72,16 @@
         <div class="contact-details">
           <p>
             Номер телефона:<br />
-            <strong>+998 71 205 84-84</strong>
+            <strong>{{ContactPhone}}</strong>
           </p>
           <p>
             Электронная почта:<br />
-            <strong>info@realsoft.co</strong>
+            <strong>{{ContactEmail}}</strong>
           </p>
         </div>
         <p>
           Адрес:<br />
-          <strong>Ташкент, Малая кольцевая дорога, 38/1</strong>
+          <strong>{{ContactAddress}}</strong>
         </p>
       </div>
     </div>
@@ -104,8 +104,9 @@ const Title = ref(null);
 const Text = ref(null);
 const Form = ref(null);
 const Contact = ref(null);
-
-
+const ContactPhone = ref(null);
+const ContactEmail = ref(null);
+const ContactAddress = ref(null);
 const Image = ref(null);
 const fetchImages = async () => {
   try {
@@ -117,6 +118,19 @@ const fetchImages = async () => {
     console.error('Error fetching images:', error);
   }
 };
+
+const fetchContactInfo = async ()=>{
+  try{
+    const response = await axios('http://localhost:8000/api/get-contact');
+    const All = response.data.data[0];
+    ContactPhone.value = All.phone;
+    ContactEmail.value = All.email;
+    ContactAddress.value = All.address;
+    // console.log(All);
+  }catch (error){
+    console.log('error',error)
+  }
+}
 
 let observers = [];
 const createObserver = (element, className) => {
@@ -168,6 +182,7 @@ const submitForm = async () => {
 onMounted(() => {
   nextTick();
   fetchImages();
+  fetchContactInfo();
   if (Title.value) {
     const observerTitle = createObserver(Title.value, "animate-title");
     observerTitle.observe(Title.value);
