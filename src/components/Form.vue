@@ -2,10 +2,8 @@
 
   <div id="form" class="form-container" :style="{ backgroundImage: `url(http://localhost:8000${Image})` }">
     <div class="form-section">
-      <p class="form-title" id="form-title" ref="Title">ТЕХНИЧЕСКАЯ ПОДДЕРЖКА</p>
-      <p class="form-subtitle" id="form-subtitle" ref="Text">
-        ОСТАВИТЬ <span>ЗАЯВКУ</span>
-      </p>
+      <p class="form-title" id="form-title" ref="Title">{{title}}</p>
+      <p class="form-subtitle" id="form-subtitle" ref="Text" v-html="heading"></p>
     </div>
     <div class="form-content">
       <!-- Contact Form -->
@@ -98,6 +96,8 @@ const companyName = ref("");
 const number = ref("");
 const email = ref("");
 const message = ref("");
+const title = ref("");
+const heading = ref("");
 const file = ref(null);
 const privacyAgreement = ref(false);
 const Title = ref(null);
@@ -131,6 +131,17 @@ const fetchContactInfo = async ()=>{
     console.log('error',error)
   }
 }
+const fetchText = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const texts = response.data.data.filter(text => text.type === 'form')[0];
+    title.value = texts.title;
+    heading.value = texts.heading;
+    // console.log(texts);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 let observers = [];
 const createObserver = (element, className) => {
@@ -183,6 +194,7 @@ onMounted(() => {
   nextTick();
   fetchImages();
   fetchContactInfo();
+  fetchText();
   if (Title.value) {
     const observerTitle = createObserver(Title.value, "animate-title");
     observerTitle.observe(Title.value);
@@ -267,7 +279,7 @@ onUnmounted(() => {
   transform: translateX(0);
 }
 
-.form-subtitle span {
+::v-deep(.form-subtitle span) {
   text-decoration-line: underline;
 }
 

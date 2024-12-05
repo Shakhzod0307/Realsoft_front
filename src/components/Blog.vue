@@ -1,8 +1,8 @@
 <template>
   <div id="blog" class="blog-section">
-    <p class="title" ref="Title">Блог</p>
+    <p class="title" ref="Title">{{title}}</p>
     <div class="portfolio-container" >
-      <p class="text" ref="Text">Последние <span>статьи</span></p>
+      <p class="text" ref="Text" v-html="heading"></p>
       <p class="all-blog" ref="AllStati">Все статьи<i class="fa-solid fa-angle-right"></i></p>
     </div>
     <div class="blog-grid">
@@ -25,6 +25,8 @@ import dayjs from "dayjs";
 const blogs = ref([]);
 const Title = ref(null);
 const Text = ref(null)
+const title = ref("")
+const heading = ref("")
 const AllBlogs = ref([]);
 const AllStati = ref(null);
 const getBlog = async () => {
@@ -39,6 +41,17 @@ const getBlog = async () => {
     console.error('Error fetching blogs:', error);
   }
 }
+const fetchText = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const texts = response.data.data.filter(text => text.type === 'blog')[0];
+    title.value = texts.title;
+    heading.value = texts.heading;
+    // console.log(texts);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 let observers = [];
 const createObserver = (element, className) => {
@@ -57,6 +70,7 @@ const createObserver = (element, className) => {
 
 onMounted(async ()=>{
     await getBlog();
+    await fetchText();
     if (Title.value) {
       const observerTitle = createObserver(Title.value, "animate-title");
       observerTitle.observe(Title.value);
@@ -136,7 +150,7 @@ onUnmounted(()=>{
   transform: translateX(0);
 }
 
-.text span {
+::v-deep(.text span) {
   color:  #007BFC;
   font-family: "Museo Sans Cyrl",Arial, sans-serif;
   font-size: 35px;
@@ -263,7 +277,7 @@ onUnmounted(()=>{
   }
   .title,
   .text,
-  .text span{
+  ::v-deep(.text span){
     font-size: 16px ;
   }
   .blog-grid {

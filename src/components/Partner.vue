@@ -1,8 +1,8 @@
 <template>
   <div id="partner" class="partner-section">
     <div class="partner-header">
-      <p class="title" ref="Title">Партнеры</p>
-      <p class="text" ref="Text">нам <span>доверяют</span></p>
+      <p class="title" ref="Title">{{title}}</p>
+      <p class="text" ref="Text" v-html="heading"></p>
     </div>
     <div class="partner-grid"  >
       <img ref="Partners" v-for="(partner, index) in images"
@@ -17,6 +17,8 @@ import {ref,onMounted,onUnmounted} from "vue";
 import axios from "axios";
 const Title = ref(null);
 const Text = ref(null);
+const title = ref("");
+const heading = ref("");
 const Partners = ref([]);
 const images = ref([]);
 
@@ -44,8 +46,21 @@ const createObserver = (element, className) => {
       }
   )
 }
+const fetchText = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const texts = response.data.data.filter(text => text.type === 'partner')[0];
+    title.value = texts.title;
+    heading.value = texts.heading;
+    // console.log(texts);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 onMounted(()=>{
   GetAllPartners();
+  fetchText();
   if (Title.value) {
     const observerTitle = createObserver(Title.value, "animate-title");
     observerTitle.observe(Title.value);
@@ -122,7 +137,7 @@ onUnmounted(()=>{
   transform: translateX(0);
 }
 
-.text span {
+::v-deep(.text span) {
   color:  #007BFC;
   font-family: "Museo Sans Cyrl",Arial, sans-serif;
   font-size: 35px;
@@ -177,7 +192,7 @@ onUnmounted(()=>{
   }
   .title,
   .text,
-  .text span{
+  ::v-deep(.text span){
     font-size: 24px;
   }
 }
@@ -188,7 +203,7 @@ onUnmounted(()=>{
   }
   .title,
   .text,
-  .text span{
+  ::v-deep(.text span){
     font-size: 16px;
   }
   .partner-grid img {

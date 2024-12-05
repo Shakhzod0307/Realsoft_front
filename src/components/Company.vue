@@ -1,23 +1,9 @@
 <template>
   <div id="company" class="about-us-container">
     <div class="text-card" ref="Card">
-      <h5 class="about-tag" id="about_tag">О НАС</h5>
-      <h2 class="about-title" id="about-title">
-        КОМПАНИЯ <span class="highlight">REALSOFT</span>
-      </h2>
-      <p class="about-description" id="about-description1">
-        RealSoft — ведущий поставщик IT-решений с подтвержденным опытом предоставления передовых технологических решений. Более 20 лет мы
-        оказываем предприятия различных отраслей нашей экспертизы в разработке индивидуального программного обеспечения: веб- и
-        мобильных приложений, облачных вычислений, управления базами данных и многого другого.
-      </p>
-      <p class="about-description" id="about-description2">
-        Наша миссия — содействовать цифровому преобразованию и помогать предприятиям процветать в стремительно меняющемся цифровом ландшафте.
-      </p>
-      <p class="about-description" id="about-description3">
-        Мы гордимся своим богатым опытом и успешным завершением множества проектов для широкого круга клиентов. С командой высококвалифицированных
-        и преданных специалистов мы стремимся предоставлять решения, разработанные под уникальные потребности наших клиентов. Наша
-        стремление к отличию принесло нам лояльную клиентскую базу и признание за выдающиеся услуги.
-      </p>
+      <h5 class="about-tag" id="about_tag">{{title}}</h5>
+      <h2 class="about-title" id="about-title" v-html="heading"></h2>
+      <p class="about-description" id="about-description1" v-html="text"></p>
       <button ref="Button" class="learn-more-btn">Подробнее</button>
     </div>
     <div class="image-section">
@@ -29,7 +15,12 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import axios from "axios";
+const Card = ref(null);
+const Button = ref(null);
 const Image = ref(null);
+const title = ref("");
+const heading = ref("");
+const text = ref("");
 const fetchImages = async () => {
   try {
     const response = await axios.get('http://localhost:8000/api/get-images');
@@ -40,8 +31,18 @@ const fetchImages = async () => {
     console.error('Error fetching images:', error);
   }
 };
-const Card = ref(null);
-const Button = ref(null);
+const fetchText = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const texts = response.data.data.filter(text => text.type === 'company')[0];
+    title.value = texts.title;
+    heading.value = texts.heading;
+    text.value = texts.text;
+    // console.log(texts);
+  } catch (error) {
+    console.error('Error fetching images:', error);
+  }
+};
 
 const observer1 = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
@@ -68,6 +69,7 @@ const observer2 = new IntersectionObserver((entries) => {
 
 onMounted(() => {
   fetchImages();
+  fetchText();
   if (Button.value) {
     observer1.observe(Button.value);
   }
@@ -129,11 +131,11 @@ onUnmounted(() => {
     margin-bottom: 20px;
   }
 
-  .highlight {
+  ::v-deep(.about-title span ){
     color: #007bff;
   }
 
-  .about-description {
+  ::v-deep(.about-description) {
     font-size: 16px;
     line-height: 1.6;
     color: #444;

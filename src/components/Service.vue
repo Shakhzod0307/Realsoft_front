@@ -1,7 +1,7 @@
 <template>
   <div id="service" class="services">
-    <p class="main-title" id="uslugi" ref="mainTitle">Услуги</p>
-    <p class="main-text" id="uslugi_text" ref="mainText">Наши <span>Услуги</span> предлагают</p>
+    <p class="main-title" id="uslugi" ref="mainTitle">{{title}}</p>
+    <p class="main-text" id="uslugi_text" ref="mainText" v-html="heading"></p>
     <div class="row">
       <div
           class="service"
@@ -14,9 +14,9 @@
         <p class="description">{{ service.text }}</p>
       </div>
     </div>
-    <p class="portfolio-title"  id="portfolio-title" ref="portfolioTitle">Портфолио</p>
+    <p class="portfolio-title"  id="portfolio-title" ref="portfolioTitle">{{portfoliotitle}}</p>
     <div class="portfolio-container" ref="portfolioContainer">
-      <p class="portfolio-text" id="portfolio-text"><span>Проекты, </span>которые мы реализовали</p>
+      <p class="portfolio-text" id="portfolio-text" v-html="portfolioHeading"></p>
       <p class="article">Все статьи<i class="fa-solid fa-angle-right"></i></p>
     </div>
   </div>
@@ -32,7 +32,24 @@ const mainText = ref(null);
 const rowRefs = ref([]);
 const portfolioTitle = ref(null);
 const portfolioContainer = ref(null);
-
+const title = ref("");
+const heading = ref("");
+const portfoliotitle = ref("");
+const portfolioHeading = ref("");
+const fetchText = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const texts = response.data.data.filter(text => text.type === 'service')[0];
+    const portfolios = response.data.data.filter(portfolio => portfolio.type === 'portfolio')[0];
+    title.value = texts.title;
+    heading.value = texts.heading;
+    portfoliotitle.value = portfolios.title;
+    portfolioHeading.value = portfolios.heading;
+    // console.log(texts);
+  } catch (error) {
+    console.error('Error fetching images:', error);
+  }
+};
 let observers = [];
 const fetchServices = async () => {
   try {
@@ -60,6 +77,7 @@ const createObserver = (element, className) => {
 
 onMounted(async () => {
   await fetchServices();
+  await fetchText();
   if (mainTitle.value) {
     const titleObserver = createObserver(mainTitle.value, 'animate-title');
     titleObserver.observe(mainTitle.value);
@@ -214,7 +232,7 @@ onUnmounted(() => {
   line-height: normal;
   text-transform: uppercase;
 }
-.main-text span{
+::v-deep(.main-text span) {
   color:  #007BFC;
   font-family: "Museo Sans Cyrl",Arial, sans-serif;
   font-size: 35px;
@@ -238,7 +256,7 @@ onUnmounted(() => {
   line-height: normal;
   text-transform: uppercase;
 }
-.portfolio-text span{
+::v-deep(.portfolio-text span){
   color:  #007BFC;
   font-family: "Museo Sans Cyrl",Arial, sans-serif;
   font-size: 35px;

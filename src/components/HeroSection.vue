@@ -1,7 +1,7 @@
 <template>
   <div class="hero row container">
     <div class="hero-content">
-      <h1 id="nav_title" class="anim">RealSoft - где идеи превращаются в реальность</h1>
+      <h1 id="nav_title" class="anim">{{heading}}</h1>
       <div class="buttons anim">
         <button>
           <img src="/images/site-alt.svg" alt="Веб-разработка">
@@ -20,7 +20,7 @@
           Инжиниринг программных продуктов
         </button>
       </div>
-      <p id="nav_text" class="anim">Высокое качество продукта, <br> знание рынка и профессионализм <br> в управлении проектами</p>
+      <p id="nav_text" class="text">{{text}}</p>
     </div>
     <div class="hero-visuals row anim">
       <img class="circle" :src="`http://localhost:8000${Circle}`"  alt="Circle">
@@ -34,6 +34,8 @@ import axios from "axios";
 import { ref, onMounted } from "vue";
 const Circle = ref(null);
 const MiniCircle = ref(null);
+const heading = ref(null);
+const text = ref(null);
 
 const fetchImages = async () => {
   try {
@@ -46,9 +48,21 @@ const fetchImages = async () => {
     console.error('Error fetching images:', error);
   }
 };
+const fetchText = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const texts = response.data.data.filter(text => text.type === 'hero')[0];
+    heading.value = texts.heading;
+    text.value = texts.text;
+    // console.log(texts);
+  } catch (error) {
+    console.error('Error fetching images:', error);
+  }
+};
 
 onMounted(() => {
   fetchImages();
+  fetchText();
 });
 </script>
 
@@ -91,6 +105,7 @@ onMounted(() => {
   font-weight: 400;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.9);
+  max-width: 350px;
 }
 
 .buttons {

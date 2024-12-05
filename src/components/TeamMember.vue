@@ -1,8 +1,8 @@
 <template>
   <div id="team" class="team-section">
     <div class="team-header">
-      <p class="title" id="team_title" ref="Title">команда</p>
-      <p class="text" ref="Text">НАША <span>команда</span> </p>
+      <p class="title" id="team_title" ref="Title">{{title}}</p>
+      <p class="text" ref="Text" v-html="heading"></p>
     </div>
 
     <!-- Team Grid -->
@@ -35,6 +35,8 @@ const Text = ref(null);
 const TeamMembers = ref([]);
 const AllTeamMembers = ref([]);
 const searchQuery = ref('');
+const title = ref('');
+const heading = ref('');
 const Teams = ref([]);
 const AllTeams = ref([]);
 
@@ -68,10 +70,23 @@ const getAllTeams = async () => {
     console.error("Failed to fetch teams:", error);
   }
 };
+const fetchText = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const texts = response.data.data.filter(text => text.type === 'team')[0];
+    title.value = texts.title;
+    heading.value = texts.heading;
+    text.value = texts.text;
+    // console.log(texts);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 
 onMounted(async ()=>{
   await getAllTeams();
+  await fetchText();
   if (Title.value) {
     const observerTitle = createObserver(Title.value, "animate-title");
     observerTitle.observe(Title.value);
@@ -160,7 +175,7 @@ onUnmounted(()=>{
   transform: translateX(0);
 }
 
-.text span {
+::v-deep(.text span ){
   color:  #007BFC;
   font-family: "Museo Sans Cyrl",Arial, sans-serif;
   font-size: 35px;
@@ -256,7 +271,7 @@ onUnmounted(()=>{
   }
   .title,
   .text,
-  .text span{
+  ::v-deep(.text span){
     font-size: 24px;
   }
 }
@@ -295,7 +310,7 @@ onUnmounted(()=>{
   }
   .title,
   .text,
-  .text span{
+  ::v-deep(.text span){
     font-size: 16px;
   }
 

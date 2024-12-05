@@ -1,8 +1,8 @@
 <template>
   <div id="advantage" class="advantage-section">
     <div class="advantage-header">
-      <p class="advantage" id="advantage" ref="Title">преимущества</p>
-      <p class="advantage-text" id="advantage-text" ref="Text">Почему <span>REALSOFT?</span></p>
+      <p class="advantage" id="advantage" ref="Title">{{title}}</p>
+      <p class="advantage-text" id="advantage-text" ref="Text" v-html="heading"></p>
     </div>
     <div class="advantage-grid">
       <div class="advantage-part" ref="Cards" v-for="(item, index) in advantages" :key="index">
@@ -18,6 +18,8 @@ import {ref, onMounted, onUnmounted, nextTick} from "vue";
 import axios from "axios";
 const Title = ref(null);
 const Text = ref(null);
+const title = ref("");
+const heading = ref("");
 const Cards = ref([]);
 const advantages = ref([]);
 
@@ -32,6 +34,18 @@ const GetAllAdvantages = async () => {
   }
 
 }
+const fetchText = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const texts = response.data.data.filter(text => text.type === 'advantage')[0];
+    title.value = texts.title;
+    heading.value = texts.heading;
+    text.value = texts.text;
+    // console.log(texts);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const createObserver = (element, className) => {
   return new IntersectionObserver(
@@ -51,6 +65,7 @@ const createObserver = (element, className) => {
 onMounted(async () => {
   await nextTick();
   await GetAllAdvantages();
+  await fetchText();
   if (Title.value) {
     const observerTitle = createObserver(Title.value, "animate-title");
     observerTitle.observe(Title.value);
@@ -128,7 +143,7 @@ onUnmounted(() => {
   transform: translateX(0);
 }
 
-.advantage-text span{
+::v-deep(.advantage-text span){
   color:  #007BFC;
   font-family: "Museo Sans Cyrl",Arial, sans-serif;
   font-size: 35px;
@@ -185,7 +200,7 @@ onUnmounted(() => {
 @media (max-width: 768px) {
   .advantage,
   .advantage-text,
-  .advantage-text span{
+  ::v-deep(.advantage-text span){
     font-size: 24px;
   }
 }
@@ -193,7 +208,7 @@ onUnmounted(() => {
 @media (max-width: 480px) {
   .advantage,
   .advantage-text,
-  .advantage-text span{
+  ::v-deep(.advantage-text span){
     font-size: 16px;
   }
 }

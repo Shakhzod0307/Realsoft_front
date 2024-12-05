@@ -2,12 +2,11 @@
   <div id="statistics" class="statistics-section">
     <div class="statistics-content">
       <div class="text-center">
-        <p class="subheading" id="statistika" ref="Title">СТАТИСТИКА</p>
-        <p class="heading" id="stat_text" ref="Heading">
-          REALSOFT - ЭТО МИРОВОЙ <span class="highlight">ПОСТАВЩИК</span> ИТ-РЕШЕНИЙ
+        <p class="subheading" id="statistika" ref="Title">{{title}}</p>
+        <p class="heading" id="stat_text" ref="Heading" v-html="heading">
         </p>
         <p class="description" id="stat_description" ref="Description">
-          RealSoft - это мировой поставщик ИТ-решений и услуг с производственными центрами в Узбекистане и филиалами в Великобритании, Соединенных Штатах, Малайзии и Объединенных Арабских Эмиратах. Наш экосистема услуг по технологиям от конечной разработки программного обеспечения до конечных услуг тестирования и обеспечения качества включает в себя:
+          {{text}}
         </p>
       </div>
       <div class="statistics-grid">
@@ -34,6 +33,9 @@ const Heading = ref(null);
 const Description = ref(null);
 const statItems = ref([]);
 const Image = ref(null);
+const title = ref("");
+const heading = ref("");
+const text = ref("");
 const fetchImages = async () => {
   try {
     const response = await axios.get('http://localhost:8000/api/get-images');
@@ -51,6 +53,18 @@ const fetchStatistics = async () => {
     // console.log(response.data.data.data);
   } catch (error) {
     console.error('Error fetching images:', error);
+  }
+};
+const fetchText = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const texts = response.data.data.filter(text => text.type === 'statistic')[0];
+    title.value = texts.title;
+    heading.value = texts.heading;
+    text.value = texts.text;
+    // console.log(texts);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -73,6 +87,7 @@ const createObserver = (element, className) => {
 onMounted(() => {
   fetchImages();
   fetchStatistics();
+  fetchText();
   if (Title.value) {
     const observerTitle = createObserver(Title.value, 'animate-title');
     observerTitle.observe(Title.value);
@@ -155,7 +170,7 @@ onUnmounted(() => {
   padding-bottom: 10px;
 }
 
-.heading span {
+::v-deep(.heading span) {
   color:  #007BFC;
   font-family: "Museo Sans Cyrl",Arial, sans-serif;
   font-size: 35px;

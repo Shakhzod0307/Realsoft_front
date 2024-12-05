@@ -1,8 +1,8 @@
 <template>
   <div id="sector" class="sectors-section">
     <div>
-      <p class="sector" id="sector_title" ref="Title">Секторы</p>
-      <p class="sector-text" id="sector_text" ref="Text">Секторы, в которых мы <span>оказываем</span> услуги</p>
+      <p class="sector" id="sector_title" ref="Title">{{title}}</p>
+      <p class="sector-text" id="sector_text" ref="Text" v-html="heading"></p>
     </div>
     <div class="sectors-row">
       <div
@@ -26,6 +26,8 @@ import axios from "axios";
 
 const Title = ref(null);
 const Text = ref(null);
+const title = ref("");
+const heading = ref("");
 const SectorCards = ref([]);
 const sectors = ref([]);
 let observers = [];
@@ -35,6 +37,17 @@ const getSectors = async () => {
     sectors.value = response.data.data.data;
   } catch (error) {
     console.error("Error fetching sectors:", error);
+  }
+};
+const fetchText = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const texts = response.data.data.filter(text => text.type === 'sector')[0];
+    title.value = texts.title;
+    heading.value = texts.heading;
+    // console.log(texts);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -56,7 +69,7 @@ const createObserver = (element, className) => {
 
 onMounted(async () => {
   await getSectors();
-
+  await fetchText();
   if (Title.value) {
     const observerTitle = createObserver(Title.value, "animate-title");
     observerTitle.observe(Title.value);
@@ -132,7 +145,7 @@ onUnmounted(() => {
   transform: translateX(0);
 }
 
-.sector-text span {
+::v-deep(.sector-text span) {
   color:  #007BFC;
   font-family: "Museo Sans Cyrl",Arial, sans-serif;
   font-size: 35px;
