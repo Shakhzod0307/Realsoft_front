@@ -125,7 +125,7 @@ onUnmounted(() => {
 <style scoped>
 
 .main-title,
-.main-text,
+::v-deep(.main-text),
 .service,
 .portfolio-title,
 .portfolio-container {
@@ -144,7 +144,7 @@ onUnmounted(() => {
 }
 
 
-.main-text {
+::v-deep(.main-text) {
   transform: translateX(-50px);
 }
 
@@ -354,8 +354,8 @@ onUnmounted(() => {
 }
 @media (max-width: 768px) {
   .main-title,
-  .main-text,
-  .main-text span{
+  ::v-deep(.main-text),
+  ::v-deep(.main-text span){
     font-size: 16px;
   }
 }

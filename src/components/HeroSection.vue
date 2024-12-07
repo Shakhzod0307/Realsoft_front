@@ -20,7 +20,7 @@
           Инжиниринг программных продуктов
         </button>
       </div>
-      <p id="nav_text" class="text">{{text}}</p>
+      <p id="nav_text" class="text" v-html="text"></p>
     </div>
     <div class="hero-visuals row anim">
       <img class="circle" :src="`http://localhost:8000${Circle}`"  alt="Circle">
@@ -40,9 +40,9 @@ const text = ref(null);
 const fetchImages = async () => {
   try {
     const response = await axios.get('http://localhost:8000/api/get-images');
-    const image = response.data.data.filter(img => img.type === 'hero');
-    Circle.value = image.find(img => img.id === 1).name;
-    MiniCircle.value = image.find(img => img.id === 2).name;
+    const image = response.data.data.data.filter(img => img.type === 'hero');
+    Circle.value = image.find(img => img.id === 1).image;
+    MiniCircle.value = image.find(img => img.id === 2).image;
     // console.log("Hero Image:", image);
   } catch (error) {
     console.error('Error fetching images:', error);
@@ -107,7 +107,10 @@ onMounted(() => {
   color: rgba(255, 255, 255, 0.9);
   max-width: 350px;
 }
-
+.text{
+  align-items: center;
+  text-align: center;
+}
 .buttons {
   display: flex;
   flex-wrap: wrap;

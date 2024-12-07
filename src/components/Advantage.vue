@@ -40,7 +40,6 @@ const fetchText = async () => {
     const texts = response.data.data.filter(text => text.type === 'advantage')[0];
     title.value = texts.title;
     heading.value = texts.heading;
-    text.value = texts.text;
     // console.log(texts);
   } catch (error) {
     console.error(error);

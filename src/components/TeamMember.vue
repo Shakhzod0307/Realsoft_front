@@ -62,10 +62,10 @@ const getAllTeams = async () => {
       params: { search: searchQuery.value }
     });
     const allTeams = response.data.data;
+    // console.log(allTeams);
     Teams.value = allTeams.filter(team => team.type === 'full');
     AllTeams.value = allTeams.filter(team => team.type === 'only-image');
 
-    // console.log(Teams.value);
   } catch (error) {
     console.error("Failed to fetch teams:", error);
   }
@@ -76,7 +76,6 @@ const fetchText = async () => {
     const texts = response.data.data.filter(text => text.type === 'team')[0];
     title.value = texts.title;
     heading.value = texts.heading;
-    text.value = texts.text;
     // console.log(texts);
   } catch (error) {
     console.error(error);

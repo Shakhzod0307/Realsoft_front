@@ -49,7 +49,7 @@
       </ul>
       <div class="action_icons">
         <template v-if="!isSearchActive">
-          <a href="#" @click.prevent="toggleSearch"><i class="fa-solid fa-magnifying-glass"></i></a>
+<!--          <a href="#" @click.prevent="toggleSearch"><i class="fa-solid fa-magnifying-glass"></i></a>-->
           <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
           <a href="#"><i class="fa-brands fa-instagram"></i></a>
           <a href="#"><i class="fa-brands fa-telegram"></i></a>

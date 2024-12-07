@@ -39,8 +39,8 @@ const text = ref("");
 const fetchImages = async () => {
   try {
     const response = await axios.get('http://localhost:8000/api/get-images');
-    const image = response.data.data.filter(img => img.type === 'statistic');
-    Image.value = image.find(img =>img.id === 4 ).name;
+    const image = response.data.data.data.filter(img => img.type === 'statistic');
+    Image.value = image.find(img =>img.id === 4 ).image;
     // console.log("Image:", Image.value);
   } catch (error) {
     console.error('Error fetching images:', error);
