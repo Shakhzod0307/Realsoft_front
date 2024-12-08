@@ -50,10 +50,15 @@
       <div class="action_icons">
         <template v-if="!isSearchActive">
 <!--          <a href="#" @click.prevent="toggleSearch"><i class="fa-solid fa-magnifying-glass"></i></a>-->
-          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-          <a href="#"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#"><i class="fa-brands fa-telegram"></i></a>
-          <a href="#"><i class="fa-brands fa-youtube"></i></a>
+          <a
+              v-for="(icon, index) in socialIcons"
+              :key="index"
+              :href="icon.url"
+              target="_blank"
+              :title="icon.name"
+          >
+            <i :class="icon.class"></i>
+          </a>
           <div class="dropdown_lang">
             <button class="dropdown-toggle_lang" @click="toggleDropdown4">
               <img style="height: 16px" src="/images/globe.svg" alt="Globe">
@@ -116,13 +121,13 @@
 </template>
 
 <script setup>
-import {computed,ref } from "vue";
+import {computed,ref, onMounted } from "vue";
 import Fuse from "fuse.js";
 import HeroSection from "@/components/HeroSection.vue";
 import {data} from "@/data/data.js";
+import axios from "axios";
 
-
-
+const socialIcons = ref([]);
 const isDropdownOpen = ref(false);
 const isOpen1 = ref(false);
 const isOpen2 = ref(false);
@@ -132,6 +137,16 @@ const isSearchActive = ref(false);
 const searchQuery = ref("");
 const searchResults = ref([]);
 
+
+const GetIcons = async ()=>{
+  try{
+    const response = await axios.get('http://localhost:8000/api/get-social-media')
+    console.log(response.data.data);
+    socialIcons.value = response.data.data;
+  }catch (error){
+    console.log('error',error);
+  }
+}
 const toggleSearch = () => {
   isSearchActive.value = !isSearchActive.value;
   searchQuery.value = '';
@@ -194,9 +209,10 @@ const toggleDropdown4 = () => {
   isOpen3.value=false;
 };
 
-// onMounted(()=>{
-//   GetSearchData();
-// })
+onMounted(()=>{
+  // GetSearchData();
+  GetIcons();
+})
 
 </script>
 
