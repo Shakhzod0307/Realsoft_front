@@ -141,7 +141,7 @@ const searchResults = ref([]);
 const GetIcons = async ()=>{
   try{
     const response = await axios.get('http://localhost:8000/api/get-social-media')
-    console.log(response.data.data);
+    // console.log(response.data.data);
     socialIcons.value = response.data.data;
   }catch (error){
     console.log('error',error);

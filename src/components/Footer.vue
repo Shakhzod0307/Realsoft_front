@@ -4,32 +4,39 @@
       <!-- Office Section -->
       <div class="footer-section">
         <h3>Офис:</h3>
-        <p>100084, Узбекистан, г. Ташкент, Малая кольцевая дорога, 38/1</p>
+        <p>{{address}}</p>
         <img src="/images/homepage.svg" alt="Realsoft Logo">
       </div>
       <!-- Contact Section -->
       <div class="footer-section">
         <h3>Контакт:</h3>
-        <p>+998 71 205 84-84</p>
+        <p>{{phone}}</p>
         <div class="social-icons">
-          <img src="/images/in.svg" alt="LinkedIn">
-          <img src="/images/instagram.svg" alt="Instagram">
-          <img src="/images/telegram.svg" alt="Telegram">
-          <img src="/images/youtube.svg" alt="YouTube">
+          <template v-if="socialMedia.length">
+            <a
+                v-for="social in socialMedia"
+                :key="social.id"
+                :href="social.url"
+                target="_blank"
+                :title="social.name"
+                rel="noopener noreferrer"
+            ><i :class="social.class"></i>
+            </a>
+          </template>
+          <p v-else>Loading...</p>
         </div>
       </div>
       <!-- Email Section -->
       <div class="footer-section">
         <h3>Электронная почта:</h3>
-        <p>info@realsoft.co</p>
+        <p>{{email}}</p>
       </div>
       <!-- Services Section -->
       <div class="footer-section">
         <h3>Услуги:</h3>
-        <p>Веб-разработка</p>
-        <p>Мобильных приложений</p>
-        <p>Разработка фронтенда</p>
-        <p>Инжиниринг программных продуктов</p>
+        <p v-for="(service,index) in Services" :key="index">
+          {{service}}
+        </p>
       </div>
     </div>
     <!-- Footer Bottom -->
@@ -41,10 +48,50 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+
+const socialMedia = ref([]);
+const phone = ref();
+const email = ref();
+const address = ref();
+const Services = ref([]);
+const fetchSocialMedia = async () => {
+  try {
+    const response = await axios.get("http://localhost:8000/api/get-social-media");
+    socialMedia.value = response.data.data;
+  } catch (error) {
+    console.error("Failed to fetch social media links:", error);
+  }
+};
+const fetchContact = async ()=>{
+  try{
+    const response = await axios('http://localhost:8000/api/get-contact');
+    const contacts = response.data.data[0];
+    phone.value = contacts.phone;
+    email.value = contacts.email;
+    address.value = contacts.address;
+    // console.log(phone.value)
+  }catch (error){
+    console.log('error',error)
+  }
+}
+const fetchService = async ()=>{
+  try{
+    const response = await axios('http://localhost:8000/api/get-services');
+    Services.value = response.data.data.data.map(service =>service.title);
+  }catch (error){
+    console.log('error',error)
+  }
+}
+onMounted(()=>{
+  fetchSocialMedia();
+  fetchContact();
+  fetchService();
+});
 </script>
 
 <style scoped>
-/* General Footer Styling */
 .footer {
   background-color: #102C57;
   color: #f5f5f5;
@@ -81,17 +128,21 @@
 .social-icons {
   display: flex;
   gap: 10px;
+  margin-top: 10px;
 }
 
-.social-icons img {
-  width: 30px;
-  height: 30px;
-  transition: transform 0.3s ease;
+.social-icons i{
+  color: #95C6F9;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #1d519f;
+
+}
+.social-icons i:hover{
+  scale: 1.05;
 }
 
-.social-icons img:hover {
-  transform: scale(1.2);
-}
 
 /* Footer Bottom */
 .footer-bottom {
@@ -124,8 +175,8 @@
   .footer-section {
     margin-bottom: 20px;
   }
-  .social-icons{
-    display: unset;
+  .social-icons {
+    justify-content: center;
   }
   .footer-bottom {
     flex-direction: column;
