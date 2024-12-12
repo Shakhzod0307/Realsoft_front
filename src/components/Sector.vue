@@ -93,7 +93,6 @@ onMounted(async () => {
   }
 });
 
-
 onUnmounted(() => {
   observers.forEach((observer) => observer.disconnect());
 });

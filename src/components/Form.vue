@@ -55,7 +55,7 @@
           </div>
           <div class="checkbox-submit">
             <label>
-              <input type="checkbox" v-model="privacyAgreement" required />
+              <input type="checkbox" @click="ConfirmCheckbox" v-model="privacyAgreement" required />
               Я прочитал <a href="#">Политику конфиденциальности</a> и согласен с ней.
             </label>
             <button type="submit" class="submit-btn">Отправить</button>
@@ -83,10 +83,25 @@
         </p>
       </div>
     </div>
+    <div v-if="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
   </div>
 
-</template>
+  <Teleport to="body">
+    <div v-if="showModal" class="modal-overlay">
+      <div class="modal">
+        <h3 class="modal-title">Confirm Submission</h3>
+        <p class="modal-text">Are you sure you would agree to Policies and Privacy?</p>
+        <div class="modal-buttons">
+          <button class="modal-button cancel-button" @click="closeModal">Cancel</button>
+          <button class="modal-button confirm-button" @click="confirmModal">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 
+</template>
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import axios from "axios";
@@ -108,6 +123,9 @@ const ContactPhone = ref(null);
 const ContactEmail = ref(null);
 const ContactAddress = ref(null);
 const Image = ref(null);
+const successMessage = ref("");
+const showModal = ref(false);
+const checkbox = ref(false);
 const fetchImages = async () => {
   try {
     const response = await axios.get('http://localhost:8000/api/get-images');
@@ -142,6 +160,12 @@ const fetchText = async () => {
     console.error(error);
   }
 };
+const ConfirmCheckbox = () => {
+  showModal.value = true;
+}
+const closeModal = () => {
+  showModal.value = false;
+}
 
 let observers = [];
 const createObserver = (element, className) => {
@@ -177,6 +201,7 @@ const submitForm = async () => {
         "Content-Type": "multipart/form-data",
       },
     });
+    successMessage.value = "Your form has been successfully submitted!";
     // console.log(response.data);
     name.value = "";
     companyName.value = "";
@@ -185,6 +210,9 @@ const submitForm = async () => {
     message.value = "";
     file.value = null;
     privacyAgreement.value = false;
+    setTimeout(() => {
+      successMessage.value = "";
+    }, 5000);
   } catch (error) {
     console.log(error);
   }
@@ -235,6 +263,41 @@ onUnmounted(() => {
   background-position: center;
 }
 
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #28a745;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 5px;
+  font-size: 16px;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Animation for showing success message */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
 
 .form-section {
   text-align: start;
@@ -405,6 +468,84 @@ onUnmounted(() => {
   color: #555;
   margin: 0;
 }
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+}
+
+/* Modal Container */
+.modal {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 400px;
+  padding: 24px;
+  text-align: center;
+}
+
+/* Modal Title */
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+/* Modal Text */
+.modal-text {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+/* Modal Buttons Container */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Buttons */
+.modal-button {
+  flex: 1;
+  padding: 10px 0;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Cancel Button */
+.cancel-button {
+  background-color: #f3f4f6;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #e5e7eb;
+}
+
+/* Confirm Button */
+.confirm-button {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
+.confirm-button:hover {
+  background-color: #2563eb;
+}
+
+
+
 
 /* Responsive behavior */
 @media (max-width: 1024px) {

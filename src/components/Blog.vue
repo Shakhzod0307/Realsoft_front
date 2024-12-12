@@ -7,7 +7,7 @@
     </div>
     <div class="blog-grid">
       <div class="blog-item" ref="AllBlogs" v-for="(blog, index) in blogs" :key="index">
-        <img :src="`http://localhost:8000${blog.image}`" alt="...">
+        <img :src="`http://localhost:8000${getMainImage(blog.images)}`" alt="...">
         <div class="blog-item-text">
           <p><i class="fa-solid fa-calendar-day"></i>{{blog.created_at}}</p>
           <h4>{{blog.title}}</h4>
@@ -29,6 +29,13 @@ const title = ref("")
 const heading = ref("")
 const AllBlogs = ref([]);
 const AllStati = ref(null);
+const getMainImage = (images) => {
+  if (Array.isArray(images)) {
+    const mainImage = images.find(image => image.index === 1);
+    return mainImage ? mainImage.url : '';
+  }
+  return '';
+};
 const getBlog = async () => {
   try{
     const response = await axios.get('http://localhost:8000/api/get-blogs');

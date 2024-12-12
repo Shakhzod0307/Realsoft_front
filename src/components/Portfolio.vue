@@ -30,8 +30,6 @@ onMounted(()=>{
     projectsData();
 })
 
-
-
 </script>
 
 <style scoped>
