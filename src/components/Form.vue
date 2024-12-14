@@ -55,7 +55,7 @@
           </div>
           <div class="checkbox-submit">
             <label>
-              <input type="checkbox" @click="ConfirmCheckbox" v-model="privacyAgreement" required />
+              <input type="checkbox" @click.prevent="ConfirmCheckbox" v-model="privacyAgreement" required />
               Я прочитал <a href="#">Политику конфиденциальности</a> и согласен с ней.
             </label>
             <button type="submit" class="submit-btn">Отправить</button>
@@ -125,7 +125,7 @@ const ContactAddress = ref(null);
 const Image = ref(null);
 const successMessage = ref("");
 const showModal = ref(false);
-const checkbox = ref(false);
+
 const fetchImages = async () => {
   try {
     const response = await axios.get('http://localhost:8000/api/get-images');
@@ -161,11 +161,18 @@ const fetchText = async () => {
   }
 };
 const ConfirmCheckbox = () => {
-  showModal.value = true;
-}
+  if (!privacyAgreement.value) {
+    showModal.value = true;
+  }
+};
 const closeModal = () => {
   showModal.value = false;
+  privacyAgreement.value = false;
 }
+const confirmModal = () => {
+  showModal.value = false;
+  privacyAgreement.value = true;
+};
 
 let observers = [];
 const createObserver = (element, className) => {
