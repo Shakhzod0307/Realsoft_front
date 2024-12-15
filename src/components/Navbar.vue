@@ -61,16 +61,17 @@
           </a>
           <div class="dropdown_lang">
             <button class="dropdown-toggle_lang" @click="toggleDropdown4">
-              <img style="height: 16px" src="/images/globe.svg" alt="Globe">
-              Русский
+              <img style="height: 16px;" src="/images/globe.svg" alt="Globe">
+              {{ props.currentLanguage.toUpperCase() }}
               <img src="/images/angle-small-right.svg" alt="Angle">
             </button>
             <ul class="dropdown-menu1" v-if="isOpen4">
-              <li><a href="#"><img src="/images/ru.svg" alt="Ru"><span style="padding:0 10px">Русский</span></a>
-                <img class="pl-4" src="/images/true.svg" alt="True">
-              </li><hr>
-              <li><a href="#"><img src="/images/uz.svg" alt="Uz"><span style="padding:0 10px">O'zbekcha</span></a></li><hr>
-              <li><a href="#"><img src="/images/en.svg" alt="En"><span style="padding:0 10px">English</span></a></li>
+              <li><button  @click="changelanguage('en')"><img src="/images/en.svg" alt="En">English </button></li>
+              <hr>
+              <li><button @click="changelanguage('uz')"><img src="/images/uz.svg" alt="Uz">Uzbek</button></li><hr>
+              <li><button  @click="changelanguage('ru')"><img src="/images/ru.svg" alt="Ru">Russian</button>
+<!--                <img class="pl-4" src="/images/true.svg" alt="True">-->
+              </li>
             </ul>
           </div>
         </template>
@@ -121,12 +122,13 @@
 </template>
 
 <script setup>
-import {computed,ref, onMounted } from "vue";
+import {computed, ref, defineEmits, onMounted, watch} from "vue";
 import Fuse from "fuse.js";
 import HeroSection from "@/components/HeroSection.vue";
 import {data} from "@/data/data.js";
 import axios from "axios";
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const socialIcons = ref([]);
 const isDropdownOpen = ref(false);
 const isOpen1 = ref(false);
@@ -136,8 +138,23 @@ const isOpen4 = ref(false);
 const isSearchActive = ref(false);
 const searchQuery = ref("");
 const searchResults = ref([]);
-
-
+const emit = defineEmits(["languageChange"]);
+const props = defineProps({
+  currentLanguage: {
+    type: String,
+    required: true,
+  },
+});
+const localLanguage = ref(props.currentLanguage);
+const changelanguage = async (lang) => {
+  if (localLanguage.value !== lang) {
+    localLanguage.value = lang;
+    emit("languageChange", lang);
+    // console.log("Language changed to:", lang);
+    await router.push({ path: `/${lang}` });
+    isOpen4.value = false;
+  }
+};
 const GetIcons = async ()=>{
   try{
     const response = await axios.get('http://localhost:8000/api/get-social-media')
@@ -208,7 +225,9 @@ const toggleDropdown4 = () => {
   isOpen2.value=false;
   isOpen3.value=false;
 };
-
+watch(() => props.currentLanguage, (newLang) => {
+  localLanguage.value = newLang;
+});
 onMounted(()=>{
   // GetSearchData();
   GetIcons();
@@ -330,18 +349,26 @@ onMounted(()=>{
 }
 
 .dropdown-menu1 li {
+  display: flex;
   padding: 10px 15px;
+  gap: 10px;
 }
 
-.dropdown-menu1 li a {
+.dropdown-menu1 li button {
   text-decoration: none;
   color: #333;
   font-size: 14px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  background: none;
 }
-.dropdown-menu1 li a:hover {
+.dropdown-menu1 li button:hover {
   color: blue;
 }
-
 .dropdown-menu1 li:hover {
   background-color: #f5f5f5;
 }

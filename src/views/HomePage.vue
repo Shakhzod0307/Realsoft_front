@@ -1,8 +1,9 @@
 <template>
   <div>
   <main>
-    <Navbar/>
+    <Navbar :currentLanguage="currentLanguage"  @languageChange="handleLanguageChange"/>
   </main>
+<!--    <h1>Current language {{currentLanguage}}</h1>-->
   <Service/>
   <Portfolio/>
   <Company/>
@@ -11,7 +12,7 @@
   <Advantage/>
   <Form/>
   <TeamMember/>
-  <Blog/>
+  <Blog :currentLanguage="currentLanguage"/>
   <Partner/>
   <Footer/>
   <button
@@ -23,8 +24,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
-
+import {ref, onMounted, onBeforeUnmount, watch} from "vue";
 import TeamMember from "@/components/TeamMember.vue";
 import Form from "@/components/Form.vue";
 import Partner from "@/components/Partner.vue";
@@ -37,9 +37,19 @@ import Statistika from "@/components/Statistika.vue";
 import Advantage from "@/components/Advantage.vue";
 import Blog from "@/components/Blog.vue";
 import Navbar from "@/components/Navbar.vue";
+import { useRoute, useRouter } from 'vue-router';
 
 
+const route = useRoute();
+const router = useRouter();
+const currentLanguage =ref(route.params.lang || 'en');
 
+const handleLanguageChange = (lang) => {
+  if (currentLanguage.value !== lang) {
+    currentLanguage.value = lang;
+    router.push({ path: `/${lang}` });
+  }
+};
 
 const showBackToNavbar = ref(true);
 const scrollToNavbar = () => {
@@ -53,10 +63,20 @@ const handleScroll = () => {
 };
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
+  // if (!route.params.lang) {
+  //   router.replace({ path: `/${currentLanguage.value}` });
+  // }
 });
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handleScroll);
 });
+watch(
+    () => route.params.lang,
+    (newLang) => {
+      currentLanguage.value = newLang || 'en';
+    },
+    { immediate: true }
+);
 </script>
 
 <style>

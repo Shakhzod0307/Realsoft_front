@@ -19,96 +19,117 @@
 </template>
 
 <script setup>
-import {onMounted, onUnmounted, ref} from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import axios from "axios";
 import dayjs from "dayjs";
+
+const props = defineProps({
+  currentLanguage: {
+    type: String,
+    required: true,
+  },
+});
+
 const blogs = ref([]);
 const Title = ref(null);
-const Text = ref(null)
-const title = ref("")
-const heading = ref("")
+const Text = ref(null);
+const title = ref("");
+const heading = ref("");
 const AllBlogs = ref([]);
 const AllStati = ref(null);
+
 const getMainImage = (images) => {
   if (Array.isArray(images)) {
-    const mainImage = images.find(image => image.index === 1);
-    return mainImage ? mainImage.url : '';
+    const mainImage = images.find((image) => image.index === 1);
+    return mainImage ? mainImage.url : "";
   }
-  return '';
+  return "";
 };
-const getBlog = async () => {
-  try{
-    const response = await axios.get('http://localhost:8000/api/get-blogs');
+
+const getBlog = async (lang) => {
+  try {
+    // console.log("Fetching blogs for language:", lang);
+    const response = await axios.get(`http://localhost:8000/api/get-blogs?lang=${lang}`);
     blogs.value = response.data.data.data.map((blog) => ({
       ...blog,
       created_at: dayjs(blog.created_at).format("MMMM D, YYYY, HH:mm"),
     }));
-    // console.log(response.data.data.data);
   } catch (error) {
-    console.error('Error fetching blogs:', error);
+    console.error("Error fetching blogs:", error);
   }
-}
+};
+
 const fetchText = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-texts');
-    const texts = response.data.data.filter(text => text.type === 'blog')[0];
-    title.value = texts.title;
-    heading.value = texts.heading;
-    // console.log(texts);
+    const response = await axios.get("http://localhost:8000/api/get-texts");
+    const texts = response.data.data.find((text) => text.type === "blog");
+    if (texts) {
+      title.value = texts.title;
+      heading.value = texts.heading;
+    }
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching text:", error);
   }
 };
 
 let observers = [];
 const createObserver = (element, className) => {
-  return new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add(className);
-          } else {
-            entry.target.classList.remove(className);
-          }
-        });
+  return new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add(className);
+      } else {
+        entry.target.classList.remove(className);
       }
-  )
-}
+    });
+  });
+};
 
-onMounted(async ()=>{
-    await getBlog();
-    await fetchText();
-    if (Title.value) {
-      const observerTitle = createObserver(Title.value, "animate-title");
-      observerTitle.observe(Title.value);
-      observers.push(observerTitle);
-    }
-    if (Text.value) {
-      const observerText = createObserver(Text.value, "animate-text");
-      observerText.observe(Text.value);
-      observers.push(observerText);
-    }
-    if (AllStati.value) {
-      const observerAllStati = createObserver(AllStati.value, "animate-all-stati");
-      observerAllStati.observe(AllStati.value);
-      observers.push(observerAllStati);
-    }
-    if(AllBlogs.value){
-      AllBlogs.value.forEach((blog) => {
-        if (blog) {
-          const observerBlog = createObserver(blog, "animate-all-blogs");
-          observerBlog.observe(blog);
-          observers.push(observerBlog);
-        }
-      })
-    }
-})
+onMounted(async () => {
+  // await getBlog(props.currentLanguage); // Fetch blogs for initial language
+  await fetchText();
 
-onUnmounted(()=>{
+  // Create observers for animations
+  if (Title.value) {
+    const observerTitle = createObserver(Title.value, "animate-title");
+    observerTitle.observe(Title.value);
+    observers.push(observerTitle);
+  }
+  if (Text.value) {
+    const observerText = createObserver(Text.value, "animate-text");
+    observerText.observe(Text.value);
+    observers.push(observerText);
+  }
+  if (AllStati.value) {
+    const observerAllStati = createObserver(AllStati.value, "animate-all-stati");
+    observerAllStati.observe(AllStati.value);
+    observers.push(observerAllStati);
+  }
+  if (AllBlogs.value) {
+    AllBlogs.value.forEach((blog) => {
+      if (blog) {
+        const observerBlog = createObserver(blog, "animate-all-blogs");
+        observerBlog.observe(blog);
+        observers.push(observerBlog);
+      }
+    });
+  }
+});
+
+onUnmounted(() => {
   observers.forEach((observer) => observer.disconnect());
-})
+});
 
+watch(
+    () => props.currentLanguage,
+    (newLang) => {
+      getBlog(newLang);
+      // console.log("Language changed to:", newLang);
+    },
+    { immediate: true } // Fetch blogs on initial render
+);
 </script>
+
 
 <style scoped>
 
