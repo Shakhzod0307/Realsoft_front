@@ -3,7 +3,6 @@
   <main>
     <Navbar :currentLanguage="currentLanguage"  @languageChange="handleLanguageChange"/>
   </main>
-<!--    <h1>Current language {{currentLanguage}}</h1>-->
   <Service/>
   <Portfolio/>
   <Company/>
@@ -59,7 +58,7 @@ const scrollToNavbar = () => {
   }
 };
 const handleScroll = () => {
-  showBackToNavbar.value = window.scrollY > 200;
+  showBackToNavbar.value = window.scrollY > 400;
 };
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
@@ -92,7 +91,7 @@ watch(
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: background-color 0.3s ease, opacity 0.3s ease;
-  z-index: 9999;
+  z-index: 99;
   opacity: 1;
 }
 

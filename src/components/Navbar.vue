@@ -49,7 +49,6 @@
       </ul>
       <div class="action_icons">
         <template v-if="!isSearchActive">
-<!--          <a href="#" @click.prevent="toggleSearch"><i class="fa-solid fa-magnifying-glass"></i></a>-->
           <a
               v-for="(icon, index) in socialIcons"
               :key="index"
@@ -70,7 +69,6 @@
               <hr>
               <li><button @click="changelanguage('uz')"><img src="/images/uz.svg" alt="Uz">Uzbek</button></li><hr>
               <li><button  @click="changelanguage('ru')"><img src="/images/ru.svg" alt="Ru">Russian</button>
-<!--                <img class="pl-4" src="/images/true.svg" alt="True">-->
               </li>
             </ul>
           </div>
@@ -368,6 +366,9 @@ onMounted(()=>{
 }
 .dropdown-menu1 li button:hover {
   color: blue;
+}
+.dropdown-menu1 li a {
+  color: black;
 }
 .dropdown-menu1 li:hover {
   background-color: #f5f5f5;

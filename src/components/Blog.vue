@@ -48,7 +48,7 @@ const getMainImage = (images) => {
 
 const getBlog = async (lang) => {
   try {
-    // console.log("Fetching blogs for language:", lang);
+    // console.log(lang);
     const response = await axios.get(`http://localhost:8000/api/get-blogs?lang=${lang}`);
     blogs.value = response.data.data.data.map((blog) => ({
       ...blog,
@@ -86,7 +86,7 @@ const createObserver = (element, className) => {
 };
 
 onMounted(async () => {
-  // await getBlog(props.currentLanguage); // Fetch blogs for initial language
+  // await getBlog(props.currentLanguage);
   await fetchText();
 
   // Create observers for animations
@@ -126,7 +126,7 @@ watch(
       getBlog(newLang);
       // console.log("Language changed to:", newLang);
     },
-    { immediate: true } // Fetch blogs on initial render
+    { immediate: true }
 );
 </script>
 
