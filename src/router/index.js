@@ -1,19 +1,46 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from "@/views/HomePage.vue";
+import { createRouter, createWebHistory } from 'vue-router';
+import HomePage from "@/views/user/HomePage.vue";
+import Dashboard from "@/views/admin/Dashboard.vue";
 
-const routes =  [
+const routes = [
+    {
+        path: '/admin',
+        meta: { requiresAuth: true, admin: true },
+        children: [
+            {
+                path: 'blogs',
+                name: 'admin-blogs',
+                component: import('@/views/admin/Dashboard.vue'),
+                props: true,
+            },
+            {
+                path: 'services',
+                name: 'admin-services',
+                component: import('@/components/admin/Service.vue'),
+                props: true,
+            }
+        ],
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: () => import('@/views/auth/Login.vue'),
+        props: true
+        // props: (route) => ({
+        //     initialLanguage: route.params.lang
+        // })
+    },
     {
         path: '/:lang?',
         name: 'home',
         component: HomePage,
-      // props: (route) => ({ initialLanguage: route.params.lang || 'en' }),
-        props:true
+        props: true
     },
-
-]
+];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+    history: createWebHistory(),
+    routes,
 });
-export default router
+
+export default router;

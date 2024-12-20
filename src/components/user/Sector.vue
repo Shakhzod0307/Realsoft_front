@@ -33,7 +33,7 @@ const sectors = ref([]);
 let observers = [];
 const getSectors = async () => {
   try {
-    const response = await axios.get("http://localhost:8000/api/get-sectors");
+    const response = await axios.get("/get-sectors");
     sectors.value = response.data.data.data;
   } catch (error) {
     console.error("Error fetching sectors:", error);
@@ -41,7 +41,7 @@ const getSectors = async () => {
 };
 const fetchText = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const response = await axios.get('/get-texts');
     const texts = response.data.data.filter(text => text.type === 'sector')[0];
     title.value = texts.title;
     heading.value = texts.heading;

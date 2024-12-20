@@ -1,9 +1,9 @@
 <template>
   <div id="blog" class="blog-section">
-    <p class="title" ref="Title">{{title}}</p>
+    <p class="title">{{title}}</p>
     <div class="portfolio-container" >
-      <p class="text" ref="Text" v-html="heading"></p>
-      <p class="all-blog" ref="AllStati">Все статьи<i class="fa-solid fa-angle-right"></i></p>
+      <p class="text"  v-html="heading"></p>
+      <p class="all-blog">Все статьи<i class="fa-solid fa-angle-right"></i></p>
     </div>
     <div class="blog-grid">
       <div class="blog-item" ref="AllBlogs" v-for="(blog, index) in blogs" :key="index">
@@ -23,20 +23,12 @@ import { onMounted, onUnmounted, ref, watch } from "vue";
 import axios from "axios";
 import dayjs from "dayjs";
 
-const props = defineProps({
-  currentLanguage: {
-    type: String,
-    required: true,
-  },
-});
+const props = 'en'
 
 const blogs = ref([]);
-const Title = ref(null);
-const Text = ref(null);
 const title = ref("");
 const heading = ref("");
 const AllBlogs = ref([]);
-const AllStati = ref(null);
 
 const getMainImage = (images) => {
   if (Array.isArray(images)) {
@@ -49,7 +41,7 @@ const getMainImage = (images) => {
 const getBlog = async (lang) => {
   try {
     // console.log(lang);
-    const response = await axios.get(`http://localhost:8000/api/get-blogs?lang=${lang}`);
+    const response = await axios.get(`/get-blogs?lang=${lang}`);
     blogs.value = response.data.data.data.map((blog) => ({
       ...blog,
       created_at: dayjs(blog.created_at).format("MMMM D, YYYY, HH:mm"),
@@ -61,7 +53,7 @@ const getBlog = async (lang) => {
 
 const fetchText = async () => {
   try {
-    const response = await axios.get("http://localhost:8000/api/get-texts");
+    const response = await axios.get("/get-texts");
     const texts = response.data.data.find((text) => text.type === "blog");
     if (texts) {
       title.value = texts.title;
@@ -72,56 +64,15 @@ const fetchText = async () => {
   }
 };
 
-let observers = [];
-const createObserver = (element, className) => {
-  return new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add(className);
-      } else {
-        entry.target.classList.remove(className);
-      }
-    });
-  });
-};
-
 onMounted(async () => {
   // await getBlog(props.currentLanguage);
   await fetchText();
 
-  // Create observers for animations
-  if (Title.value) {
-    const observerTitle = createObserver(Title.value, "animate-title");
-    observerTitle.observe(Title.value);
-    observers.push(observerTitle);
-  }
-  if (Text.value) {
-    const observerText = createObserver(Text.value, "animate-text");
-    observerText.observe(Text.value);
-    observers.push(observerText);
-  }
-  if (AllStati.value) {
-    const observerAllStati = createObserver(AllStati.value, "animate-all-stati");
-    observerAllStati.observe(AllStati.value);
-    observers.push(observerAllStati);
-  }
-  if (AllBlogs.value) {
-    AllBlogs.value.forEach((blog) => {
-      if (blog) {
-        const observerBlog = createObserver(blog, "animate-all-blogs");
-        observerBlog.observe(blog);
-        observers.push(observerBlog);
-      }
-    });
-  }
 });
 
-onUnmounted(() => {
-  observers.forEach((observer) => observer.disconnect());
-});
 
 watch(
-    () => props.currentLanguage,
+    () => props,
     (newLang) => {
       getBlog(newLang);
       // console.log("Language changed to:", newLang);
@@ -145,14 +96,11 @@ watch(
   background:  #EFF3F9;
   backdrop-filter: blur(5px);
   margin: 100px 0 20px;
-  opacity: 0;
-  transition: opacity 1s ease-out, transform 0.5s ease-out;
-  transform: translateX(50px);
-}
-.title.animate-title{
   opacity: 1;
-  transform: translateX(0);
+  transition: opacity 1s ease-out, transform 0.5s ease-out;
+
 }
+
 
 .portfolio-container {
   display: flex;
@@ -169,13 +117,8 @@ watch(
   font-weight: 600;
   line-height: normal;
   text-transform: uppercase;
-  opacity: 0;
-  transition: opacity 1s ease-out, transform 0.5s ease-out;
-  transform: translateX(50px);
-}
-.text.animate-text{
   opacity: 1;
-  transform: translateX(0);
+  transition: opacity 1s ease-out, transform 0.5s ease-out;
 }
 
 ::v-deep(.text span) {
@@ -205,14 +148,10 @@ watch(
   font-style: normal;
   font-weight: 400;
   line-height: 140%;
-  opacity: 0;
-  transition: opacity 1s ease-out, transform 0.5s ease-out;
-  transform: translateX(-80px);
-}
-.all-blog.animate-all-stati{
   opacity: 1;
-  transform: translateX(0);
+  transition: opacity 1s ease-out, transform 0.5s ease-out;
 }
+
 .all-blog i {
   margin-left: 10px;
   transition: margin-left 0.3s;
@@ -242,14 +181,10 @@ watch(
   padding: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  opacity: 0;
-  transition: opacity 1s ease-out, transform 1s ease-out;
-  transform: translateX(-80px);
-}
-.blog-item.animate-all-blogs{
   opacity: 1;
-  transform: translateX(0);
+  transition: opacity 1s ease-out, transform 1s ease-out;
 }
+
 .blog-item:hover {
   transform: translateY(-5px);
 }

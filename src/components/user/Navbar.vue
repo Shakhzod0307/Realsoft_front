@@ -68,8 +68,7 @@
               <li><button  @click="changelanguage('en')"><img src="/images/en.svg" alt="En">English </button></li>
               <hr>
               <li><button @click="changelanguage('uz')"><img src="/images/uz.svg" alt="Uz">Uzbek</button></li><hr>
-              <li><button  @click="changelanguage('ru')"><img src="/images/ru.svg" alt="Ru">Russian</button>
-              </li>
+              <li><button  @click="changelanguage('ru')"><img src="/images/ru.svg" alt="Ru">Russian</button></li>
             </ul>
           </div>
         </template>
@@ -122,7 +121,7 @@
 <script setup>
 import {computed, ref, defineEmits, onMounted, watch} from "vue";
 import Fuse from "fuse.js";
-import HeroSection from "@/components/HeroSection.vue";
+import HeroSection from "@/components/user/HeroSection.vue";
 import {data} from "@/data/data.js";
 import axios from "axios";
 import { useRouter } from 'vue-router';

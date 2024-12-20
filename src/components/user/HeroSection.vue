@@ -39,7 +39,7 @@ const text = ref(null);
 
 const fetchImages = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-images');
+    const response = await axios.get('/get-images');
     const image = response.data.data.data.filter(img => img.type === 'hero');
     Circle.value = image.find(img => img.id === 1).image;
     MiniCircle.value = image.find(img => img.id === 2).image;
@@ -50,7 +50,7 @@ const fetchImages = async () => {
 };
 const fetchText = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const response = await axios.get('/get-texts');
     const texts = response.data.data.filter(text => text.type === 'hero')[0];
     heading.value = texts.heading;
     text.value = texts.text;

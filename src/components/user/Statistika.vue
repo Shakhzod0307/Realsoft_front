@@ -38,7 +38,7 @@ const heading = ref("");
 const text = ref("");
 const fetchImages = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-images');
+    const response = await axios.get('/get-images');
     const image = response.data.data.data.filter(img => img.type === 'statistic');
     Image.value = image.find(img =>img.id === 4 ).image;
     // console.log("Image:", Image.value);
@@ -48,7 +48,7 @@ const fetchImages = async () => {
 };
 const fetchStatistics = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-statistics');
+    const response = await axios.get('/get-statistics');
     statItems.value = response.data.data.data;
     // console.log(response.data.data.data);
   } catch (error) {
@@ -57,7 +57,7 @@ const fetchStatistics = async () => {
 };
 const fetchText = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const response = await axios.get('/get-texts');
     const texts = response.data.data.filter(text => text.type === 'statistic')[0];
     title.value = texts.title;
     heading.value = texts.heading;

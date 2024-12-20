@@ -58,7 +58,7 @@ const createObserver = (element, className) => {
 
 const getAllTeams = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-teams', {
+    const response = await axios.get('/get-teams', {
       params: { search: searchQuery.value }
     });
     const allTeams = response.data.data;
@@ -72,7 +72,7 @@ const getAllTeams = async () => {
 };
 const fetchText = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const response = await axios.get('/get-texts');
     const texts = response.data.data.filter(text => text.type === 'team')[0];
     title.value = texts.title;
     heading.value = texts.heading;

@@ -58,7 +58,7 @@ const address = ref();
 const Services = ref([]);
 const fetchSocialMedia = async () => {
   try {
-    const response = await axios.get("http://localhost:8000/api/get-social-media");
+    const response = await axios.get("/get-social-media");
     socialMedia.value = response.data.data;
   } catch (error) {
     console.error("Failed to fetch social media links:", error);
@@ -66,7 +66,7 @@ const fetchSocialMedia = async () => {
 };
 const fetchContact = async ()=>{
   try{
-    const response = await axios('http://localhost:8000/api/get-contact');
+    const response = await axios('/get-contact');
     const contacts = response.data.data[0];
     phone.value = contacts.phone;
     email.value = contacts.email;
@@ -78,7 +78,7 @@ const fetchContact = async ()=>{
 }
 const fetchService = async ()=>{
   try{
-    const response = await axios('http://localhost:8000/api/get-services');
+    const response = await axios('/get-services');
     Services.value = response.data.data.data.map(service =>service.title);
   }catch (error){
     console.log('error',error)

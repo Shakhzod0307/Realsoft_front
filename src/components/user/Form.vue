@@ -203,7 +203,7 @@ const submitForm = async () => {
       formData.append("file", file.value);
     }
     formData.append("privacy_agreement", privacyAgreement.value);
-    const response = await axios.post("http://localhost:8000/api/post-form", formData, {
+    const response = await axios.post("/post-form", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

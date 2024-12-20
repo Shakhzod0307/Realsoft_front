@@ -23,7 +23,7 @@ const heading = ref("");
 const text = ref("");
 const fetchImages = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-images');
+    const response = await axios.get('/get-images');
     const image = response.data.data.data.filter(img => img.type === 'company');
     Image.value = image.find(img =>img.id === 3 ).image;
     // console.log("Image:", Image.name);
@@ -33,7 +33,7 @@ const fetchImages = async () => {
 };
 const fetchText = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const response = await axios.get('/get-texts');
     const texts = response.data.data.filter(text => text.type === 'company')[0];
     title.value = texts.title;
     heading.value = texts.heading;

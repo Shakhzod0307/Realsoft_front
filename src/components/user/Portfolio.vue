@@ -18,7 +18,7 @@ const projects = ref([]);
 
 const projectsData = async ()=>{
   try{
-    const response =  await axios.get('http://localhost:8000/api/get-projects');
+    const response =  await axios.get('/get-projects');
     projects.value = response.data.data;
     // console.log(response.data.data);
   }catch (error){

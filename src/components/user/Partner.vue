@@ -24,7 +24,7 @@ const images = ref([]);
 
 const GetAllPartners = async () => {
   try{
-    const response = await axios.get('http://localhost:8000/api/get-partners')
+    const response = await axios.get('/get-partners')
     images.value= response.data.data;
     // console.log(response.data.data);
   }catch (error) {
@@ -48,7 +48,7 @@ const createObserver = (element, className) => {
 }
 const fetchText = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const response = await axios.get('/get-texts');
     const texts = response.data.data.filter(text => text.type === 'partner')[0];
     title.value = texts.title;
     heading.value = texts.heading;

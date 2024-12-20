@@ -38,7 +38,7 @@ const portfoliotitle = ref("");
 const portfolioHeading = ref("");
 const fetchText = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-texts');
+    const response = await axios.get('/get-texts');
     const texts = response.data.data.filter(text => text.type === 'service')[0];
     const portfolios = response.data.data.filter(portfolio => portfolio.type === 'portfolio')[0];
     title.value = texts.title;
@@ -53,7 +53,7 @@ const fetchText = async () => {
 let observers = [];
 const fetchServices = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/get-services');
+    const response = await axios.get('/get-services');
     services.value = response.data.data.data;
   } catch (error) {
     console.error('Error fetching services:', error);
