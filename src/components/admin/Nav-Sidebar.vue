@@ -11,7 +11,7 @@
           A
         </button>
 
-        <div class="profile-dropdown">
+        <div class="profile-dropdown" @click="openprofile">
           <div class="profile-info">
             <img class="profile-img" src="" alt="User Image">
             <div class="profile-name">Admin</div>
@@ -35,12 +35,17 @@
       <!-- aside -->
       <aside class="sidebar">
         <button class="sidebar-btn">
-          <span class="icon"><i class="bx bx-briefcase"></i></span>
-          <span class="btn-text">Services</span>
+          <router-link to="services">
+            <span class="icon"><i class="bx bx-briefcase"></i></span>
+            <span class="btn-text">Services</span>
+          </router-link>
         </button>
         <button class="sidebar-btn">
-          <span class="icon"><i class="bx bx-news"></i></span>
-          <span class="btn-text">Blogs</span>
+          <router-link to="blogs">
+            <span class="icon"><i class="bx bx-news"></i></span>
+            <span class="btn-text">Blogs</span>
+          </router-link>
+
         </button>
         <button class="sidebar-btn">
           <span class="icon"><i class="bx bx-buildings"></i></span>
@@ -81,7 +86,9 @@
       </aside>
 
       <div id="app" class="main-content">
-        <slot></slot>
+        <slot>
+
+        </slot>
       </div>
     </div>
   </main>

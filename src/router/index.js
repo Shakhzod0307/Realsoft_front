@@ -5,12 +5,13 @@ import Dashboard from "@/views/admin/Dashboard.vue";
 const routes = [
     {
         path: '/admin',
+        component: Dashboard,
         meta: { requiresAuth: true, admin: true },
         children: [
             {
                 path: 'blogs',
                 name: 'admin-blogs',
-                component: import('@/views/admin/Dashboard.vue'),
+                component: import('@/components/admin/Blogs.vue'),
                 props: true,
             },
             {
